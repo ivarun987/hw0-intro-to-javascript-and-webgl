@@ -32,9 +32,14 @@ out vec4 fs_Col;            // The color of each vertex. This is implicitly pass
 const vec4 lightPos = vec4(5, 5, 3, 1); //The position of our virtual light, which is used to compute the shading of
                                         //the geometry in the fragment shader.
 
+
+uniform int u_Time;
+flat out int fs_Time;
+
 void main()
 {
-    fs_Col = vec4(0,1,0,1);                         // Pass the vertex colors to the fragment shader for interpolation
+    fs_Time = u_Time;
+    fs_Col = vs_Col;                         // Pass the vertex colors to the fragment shader for interpolation
 
     mat3 invTranspose = mat3(u_ModelInvTr);
     fs_Nor = vec4(invTranspose * vec3(vs_Nor), 0);          // Pass the vertex normals to the fragment shader for interpolation.
@@ -43,10 +48,16 @@ void main()
                                                             // perpendicular to the surface after the surface is transformed by
                                                             // the model matrix.
 
-
     vec4 modelposition = u_Model * vs_Pos;   // Temporarily store the transformed vertex positions for use below
+    fs_LightVec = lightPos + modelposition;  // Compute the direction in which the light source lies
 
-    fs_LightVec = lightPos - modelposition;  // Compute the direction in which the light source lies
+    float t = sin(float(u_Time) / 100.0);
+    vec4 wavy_modelposition = modelposition + vec4(
+      sin(float(u_Time) * modelposition.y / 100.0),
+      sin(float(u_Time) * 0.05),
+      sin(modelposition.x * 0.2), 0);
+
+//    modelposition = mix(modelposition, wavy_modelposition, t);
 
     gl_Position = u_ViewProj * modelposition;// gl_Position is a built-in variable of OpenGL which is
                                              // used to render the final positions of the geometry's vertices

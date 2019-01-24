@@ -18,27 +18,35 @@ uniform vec4 u_Color; // The color with which to render this instance of geometr
 in vec4 fs_Nor;
 in vec4 fs_LightVec;
 in vec4 fs_Col;
+flat in int fs_Time;
 
 out vec4 out_Col; // This is the final output color that you will see on your
                   // screen for the pixel that is currently being processed.
 
+
 void main()
 {
     // Material base color (before shading)
-    vec4 diffuseColor = u_Color;
-    // vec4 diffuseColor = fs_Col;
+        vec4 diffuseColor = u_Color;
 
-    // Calculate the diffuse term for Lambert shading
-    float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
-    // Avoid negative lighting values
-    // diffuseTerm = clamp(diffuseTerm, 0, 1);
+        // Calculate the diffuse term for Lambert shading
+        float diffuseTerm = dot(normalize(fs_Nor), normalize(fs_LightVec));
+        // Avoid negative lighting values
+        // diffuseTerm = clamp(diffuseTerm, 0, 1);
 
-    float ambientTerm = 0.2;
+        float ambientTerm = 0.3;
 
-    float lightIntensity = diffuseTerm + ambientTerm;   //Add a small float value to the color multiplier
-                                                        //to simulate ambient lighting. This ensures that faces that are not
-                                                        //lit by our point light are not completely black.
+        float lightIntensity = diffuseTerm - ambientTerm;   //Add a small float value to the color multiplier
+                                                            //to simulate ambient lighting. This ensures that faces that are not
+                                                            //lit by our point light are not completely black.
 
-    // Compute final shaded color
-    out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
+        vec3 a = vec3(0.5, 0.5, 0.5);
+        vec3 b = vec3(0.5, 0.5, 0.5);
+        vec3 c = vec3(1.0, 1.0, 1.0);
+        vec3 d = vec3(0.00, 0.33, 0.67);
+
+        out_Col = vec4(a + b * cos(6.28318 * float(c * diffuseTerm + d) * sin(float(fs_Time) * 0.005)) * fs_Nor.xyz * lightIntensity, diffuseColor.a);
+
+        // Compute final shaded color
+        // out_Col = vec4(diffuseColor.rgb * lightIntensity, diffuseColor.a);
 }
