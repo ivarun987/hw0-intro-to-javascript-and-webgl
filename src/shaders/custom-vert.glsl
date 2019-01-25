@@ -57,7 +57,7 @@ void main()
       sin(float(u_Time) * 0.05),
       sin(modelposition.x * 0.2), 0);
 
-//    modelposition = mix(modelposition, wavy_modelposition, t);
+    modelposition = mix(modelposition, wavy_modelposition, t);
 
     gl_Position = u_ViewProj * modelposition;// gl_Position is a built-in variable of OpenGL which is
                                              // used to render the final positions of the geometry's vertices
